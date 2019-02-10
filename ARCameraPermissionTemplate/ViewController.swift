@@ -9,10 +9,13 @@
 import UIKit
 import SceneKit
 import ARKit
+import AVFoundation
 
 class ViewController: UIViewController, ARSCNViewDelegate {
 
     @IBOutlet var sceneView: ARSCNView!
+    
+    let cameraAuthStatus = AVCaptureDevice.authorizationStatus(for: .video)
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -40,11 +43,53 @@ class ViewController: UIViewController, ARSCNViewDelegate {
         sceneView.session.run(configuration)
     }
     
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        
+        checkPermission()
+        
+        NotificationCenter.default.addObserver(self, selector: #selector(checkPermission), name: UIApplication.willEnterForegroundNotification, object: nil)
+    }
+    
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
         
         // Pause the view's session
         sceneView.session.pause()
+    }
+    
+    @objc private func checkPermission() {
+        switch cameraAuthStatus {
+        case .notDetermined:
+            requestCameraPermission()
+        case .restricted, .denied:
+            alertCameraAccessNeeded()
+        case .authorized:
+            break
+        }
+    }
+    
+    func requestCameraPermission() {
+        AVCaptureDevice.requestAccess(for: .video, completionHandler: {accessGranted in
+            print("camera permission ", accessGranted)
+        })
+    }
+    
+    func alertCameraAccessNeeded() {
+        let settingsAppURL = URL(string: UIApplication.openSettingsURLString)!
+        
+        let alert = UIAlertController(
+            title: NSLocalizedString("need camera access", comment: ""),
+            message: NSLocalizedString("camera usage perpose", comment: ""),
+            preferredStyle: UIAlertController.Style.alert
+        )
+        
+        alert.addAction(UIAlertAction(title: NSLocalizedString("don't allow", comment: ""), style: .cancel, handler: nil))
+        alert.addAction(UIAlertAction(title: NSLocalizedString("OK", comment: ""), style: .default, handler: { (alert) -> Void in
+            UIApplication.shared.open(settingsAppURL, options: [:], completionHandler: nil)
+        }))
+        
+        present(alert, animated: true, completion: nil)
     }
 
     // MARK: - ARSCNViewDelegate

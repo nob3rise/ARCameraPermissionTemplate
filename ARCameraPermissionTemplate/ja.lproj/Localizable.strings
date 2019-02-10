@@ -1,0 +1,12 @@
+/* 
+  Localizable.strings
+  ARCameraPermissionTemplate
+
+  Created by Nob on 2019/02/10.
+  Copyright © 2019 Nob. All rights reserved.
+*/
+
+"ok" = "OK";
+"don't allow" = "許可しない";
+"need camera access" = "アプリのご利用にはカメラアクセスが必要です";
+"camera usage perpose" = "アプリはカメラでキャプチャした映像を元にARを提供します。";

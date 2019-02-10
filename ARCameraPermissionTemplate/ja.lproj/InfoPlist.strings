@@ -1,0 +1,9 @@
+/* 
+  InfoPlist.strings
+  ARCameraPermissionTemplate
+
+  Created by Nob on 2019/02/10.
+  Copyright © 2019 Nob. All rights reserved.
+*/
+
+"NSCameraUsageDescription" = "アプリはカメラでキャプチャした映像を元にARを提供します。";
